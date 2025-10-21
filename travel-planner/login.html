@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Adventure Awaits</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1740&q=80') 
+                  no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.304);
+      backdrop-filter: blur(12px);
+      padding: 60px 50px;
+      border-radius: 25px;
+      width: 480px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .icon img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 26px;
+      margin-bottom: 35px;
+    }
+
+    .input-field {
+      width: 100%;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-field input {
+      width: 100%;
+      padding: 15px 18px;
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .input-field input::placeholder {
+      color: #ddd;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 15px;
+      top: 14px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #00a8ff;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0090e0;
+    }
+
+    .signup-link {
+      margin-top: 20px;
+      font-size: 15px;
+    }
+
+    .signup-link a {
+      color: #00a8ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .terms {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .terms a {
+      color: #00a8ff;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+        padding: 40px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <img src="images/logo2.png" alt="Logo" />
+    </div>
+    <h2>Welcome Back</h2>
+
+    <form>
+      <div class="input-field">
+        <input type="email" placeholder="Enter your email address" required />
+      </div>
+      <div class="input-field">
+        <input type="password" id="password" placeholder="Enter your password" required />
+        <span class="show-password" onclick="togglePassword('password')">👁️</span>
+      </div>
+
+      <button type="submit" class="btn">Log In</button>
+
+      <div class="signup-link">
+        Don’t have an account? <a href="signup.html">Sign Up</a>
+      </div>
+
+      <div class="terms">
+        By logging in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Trip Documents & Packing List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #AEC6CF;
+            --secondary: #F5F5F5;
+            --accent: #98FB98;
+            --background-light: #f6f7f8;
+            --background-dark: #101c22;
+            --text-dark: #0d171b;
+            --text-light: #f8fafc;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --border-radius: 0.25rem;
+            --border-radius-lg: 0.5rem;
+            --border-radius-xl: 0.75rem;
+            --border-radius-full: 9999px;
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
+        body.dark {
+            background-color: var(--background-dark);
+            color: #e5e7eb;
+        }
+
+        /* Layout */
+        .design-root {
+            position: relative;
+            display: flex;
+            height: auto;
+            min-height: 100vh;
+            width: 100%;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .layout-container {
+            display: flex;
+            height: 100%;
+            flex-grow: 1;
+            flex-direction: column;
+        }
+
+        .main-container {
+            padding: 0 1rem;
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-container {
+                padding-left: 2.5rem;
+                padding-right: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                padding-left: 5rem;
+                padding-right: 5rem;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .main-container {
+                padding-left: 10rem;
+                padding-right: 10rem;
+            }
+        }
+
+        .layout-content-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 900;
+            line-height: 1.25;
+            letter-spacing: -0.033em;
+            min-width: 18rem;
+        }
+
+        /* Content Layout */
+        .content-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-layout {
+                flex-direction: row;
+            }
+        }
+
+        /* Document Vault Section */
+        .document-vault {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 1024px) {
+            .document-vault {
+                width: 50%;
+            }
+        }
+
+        .section-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: -0.015em;
+            padding: 0 1rem;
+            padding-bottom: 0.75rem;
+            padding-top: 1.25rem;
+        }
+
+        .section-description {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: normal;
+            padding-bottom: 0.75rem;
+            padding-top: 0.25rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .document-grid {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .document-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .document-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: var(--border-radius-xl);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-200);
+        }
+
+        .dark .document-card {
+            background-color: var(--gray-800);
+            border-color: var(--gray-700);
+        }
+
+        .document-icon {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .document-name {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: normal;
+        }
+
+        .upload-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .dark .security-note {
+            color: var(--gray-400);
+        }
+
+        .security-icon {
+            font-size: 1rem;
+        }
+
+        /* Packing List Section */
+        .packing-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: var(--border-radius-xl);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-200);
+            padding: 1rem;
+        }
+
+        .dark .packing-list {
+            background-color: var(--gray-800);
+            border-color: var(--gray-700);
+        }
+
+        @media (min-width: 1024px) {
+            .packing-list {
+                width: 50%;
+            }
+        }
+
+        .packing-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .category {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox {
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: var(--border-radius);
+            accent-color: var(--accent);
+        }
+
+        .checkbox:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .add-item-container {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .dark .add-item-container {
+            border-top-color: var(--gray-700);
+        }
+
+        .add-item-input-container {
+            position: relative;
+        }
+
+        .add-item-input {
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 3rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius-lg);
+            background-color: white;
+        }
+
+        .dark .add-item-input {
+            background-color: var(--gray-700);
+            border-color: var(--gray-600);
+        }
+
+        .add-item-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(174, 198, 207, 0.3);
+        }
+
+        .add-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 100%;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Material Icons */
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="design-root">
+        <div class="layout-container">
+            <div class="main-container">
+                <div class="layout-content-container">
+                    <div class="page-header">
+                        <p class="page-title">Trip Documents & Packing List</p>
+                    </div>
+                    <div class="content-layout">
+                        <!-- Left Column: Document Vault -->
+                        <div class="document-vault">
+                            <h2 class="section-title">Your Secure Document Vault</h2>
+                            <p class="section-description">
+                                Upload your important documents for easy access during your trip. All files are securely encrypted.
+                            </p>
+                            <div class="document-grid">
+                                <div class="document-card">
+                                    <span class="material-symbols-outlined document-icon">travel</span>
+                                    <p class="document-name">Passport</p>
+                                    <button class="upload-button">Upload File</button>
+                                </div>
+                                <div class="document-card">
+                                    <span class="material-symbols-outlined document-icon">health_and_safety</span>
+                                    <p class="document-name">Travel Insurance</p>
+                                    <button class="upload-button">Upload File</button>
+                                </div>
+                                <div class="document-card">
+                                    <span class="material-symbols-outlined document-icon">flight_takeoff</span>
+                                    <p class="document-name">Visas</p>
+                                    <button class="upload-button">Upload File</button>
+                                </div>
+                                <div class="document-card">
+                                    <span class="material-symbols-outlined document-icon">description</span>
+                                    <p class="document-name">Other Documents</p>
+                                    <button class="upload-button">Upload File</button>
+                                </div>
+                            </div>
+                            <div class="security-note">
+                                <span class="material-symbols-outlined security-icon">lock</span>
+                                <p>Securely Stored</p>
+                            </div>
+                        </div>
+                        <!-- Right Column: Packing List -->
+                        <div class="packing-list">
+                            <h2 class="section-title">Your Packing Checklist</h2>
+                            <div class="packing-content">
+                                <!-- Clothing Category -->
+                                <div class="category">
+                                    <h3 class="category-title">Clothing</h3>
+                                    <ul class="checklist">
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>T-shirts (x5)</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>Jeans (x2)</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox" checked/>
+                                            <span>Sweater</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Toiletries Category -->
+                                <div class="category">
+                                    <h3 class="category-title">Toiletries</h3>
+                                    <ul class="checklist">
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox" checked/>
+                                            <span>Toothbrush & Toothpaste</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>Shampoo & Conditioner</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>Sunscreen</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Electronics Category -->
+                                <div class="category">
+                                    <h3 class="category-title">Electronics</h3>
+                                    <ul class="checklist">
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox" checked/>
+                                            <span>Phone & Charger</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>Power Bank</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Essentials Category -->
+                                <div class="category">
+                                    <h3 class="category-title">Essentials</h3>
+                                    <ul class="checklist">
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>Wallet</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <input class="checkbox" type="checkbox"/>
+                                            <span>House Keys</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="add-item-container">
+                                    <div class="add-item-input-container">
+                                        <input class="add-item-input" placeholder="Add a new item" type="text"/>
+                                        <button class="add-button">
+                                            <span class="material-symbols-outlined">add_circle</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

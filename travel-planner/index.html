@@ -144,34 +144,50 @@
             gap: 15px;
         }
 
-        .login-btn, .signup-btn {
+        /* --- STYLES FOR NEW BUTTONS --- */
+        .btn-base {
             padding: 10px 20px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition);
+            cursor: pointer;
         }
-
         .login-btn {
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-
         .login-btn:hover {
             background-color: var(--black);
             color: white;
         }
-
         .signup-btn {
             background-color: var(--white);
             color: #2A6DFF;
              border: 2px solid var(--primary);
         }
-
         .signup-btn:hover {
             background-color: var(--white);
             color: #ffffff;
         }
+        /* Style for the new logout button */
+        .logout-btn {
+            background-color: #f72585; /* A danger/logout color */
+            color: white;
+            border: 2px solid #f72585;
+        }
+        .logout-btn:hover {
+            background-color: #d11466;
+            border-color: #d11466;
+        }
+        /* Style for the welcome message */
+        .welcome-message {
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            align-self: center;
+        }
+        /* --- END NEW STYLES --- */
 
         .mobile-menu-btn {
             display: none;
@@ -210,12 +226,11 @@
             font-weight: 300;
         }
         .search-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+        }
         
         /* Features Section */
         .features-section {
@@ -683,9 +698,14 @@
                     </ul>
                 </nav>
                 
-                <div class="auth-buttons">
-                    <a href="login.html" class="login-btn">Log in</a>
-                    <a href="signup.html" class="signup-btn">Sign up</a>
+                <!-- 
+                  THIS IS THE DYNAMIC PART!
+                  We give it an ID so JavaScript can change its content.
+                -->
+                <div class="auth-buttons" id="auth-container">
+                    <!-- This will be replaced by JavaScript -->
+                    <a href="login.html" class="btn-base login-btn">Log in</a>
+                    <a href="signup.html" class="btn-base signup-btn">Sign up</a>
                 </div>
                 
                 <button class="mobile-menu-btn">
@@ -779,7 +799,6 @@
                 
             </div>
         </div>
-    </section>
     </section>
     
     <section class="dashboard-section">
@@ -902,81 +921,138 @@
         </div>
     </footer>
 
+    <!-- 
+      ==================================================================
+      NEW SCRIPT BLOCK
+      This script replaces your old one.
+      COPY THIS ENTIRE <script>...</script> BLOCK to all your other pages
+      (hotels.html, destination.html, travel.html)
+      ==================================================================
+    -->
     <script>
-        // Navigation active state based on current page
+        // Run all our JavaScript code once the page is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- 1. SESSION MANAGEMENT (Check if user is logged in) ---
+            const authContainer = document.getElementById('auth-container');
+            
+            async function checkLoginStatus() {
+                try {
+                    const response = await fetch('check_session.php');
+                    const result = await response.json();
+
+                    if (result.loggedIn) {
+                        // User IS logged in
+                        // Show Welcome message and Logout button
+                        authContainer.innerHTML = `
+                            <span class="welcome-message">Welcome, ${result.username}!</span>
+                            <button id="logout-btn" class="btn-base logout-btn">Log Out</button>
+                        `;
+                        
+                        // Add an event listener to the new logout button
+                        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+                        
+                    } else {
+                        // User is NOT logged in
+                        // Show Login and Sign Up buttons
+                        authContainer.innerHTML = `
+                            <a href="login.html" class="btn-base login-btn">Log in</a>
+                            <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error checking session:', error);
+                    // If the check fails, just show the default login/signup buttons
+                    authContainer.innerHTML = `
+                        <a href="login.html" class="btn-base login-btn">Log in</a>
+                        <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                    `;
+                }
+            }
+            
+            // Function to handle logout
+            async function handleLogout() {
+                try {
+                    await fetch('logout.php');
+                    // Once logged out, reload the page to update the state
+                    window.location.reload();
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                }
+            }
+
+            // Run the login check as soon as the page loads
+            checkLoginStatus();
+
+            
+            // --- 2. NAVIGATION ACTIVE STATE ---
             const currentPage = window.location.pathname.split('/').pop();
             const navLinks = document.querySelectorAll('.main-nav a');
             
             navLinks.forEach(link => {
-                // Remove active class from all links first
                 link.classList.remove('active');
-                
-                // Get the href of the link and compare with current page
                 const linkPage = link.getAttribute('href');
                 
-                // Special case for index.html or root
                 if ((currentPage === 'index.html' || currentPage === '' || currentPage.includes('index')) && linkPage === 'index.html') {
                     link.classList.add('active');
-                }
-                // For other pages
-                else if (linkPage === currentPage) {
+                } else if (linkPage === currentPage) {
                     link.classList.add('active');
                 }
-                
-                // Add click handler for visual feedback
-                link.addEventListener('click', function() {
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+            });
+
+            // --- 3. BUDGET TRACKER TOGGLE ---
+            const budgetTrackerSection = document.querySelector('.budget-tracker-section');
+            const openBudgetTrackerBtn = document.querySelector('.open-budget-tracker-btn');
+            const closeBudgetTrackerBtn = document.querySelector('.close-budget-tracker');
+
+            if (openBudgetTrackerBtn) {
+                openBudgetTrackerBtn.addEventListener('click', function() {
+                    // Check if user is logged in before opening
+                    // We can check the content of the authContainer
+                    if (document.getElementById('logout-btn')) {
+                        budgetTrackerSection.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        // If not logged in, send them to the login page
+                        alert('Please log in to use the budget tracker.');
+                        window.location.href = 'login.html';
+                    }
                 });
-            });
-        });
-
-        // Budget Tracker Toggle
-        const budgetTrackerSection = document.querySelector('.budget-tracker-section');
-        const openBudgetTrackerBtn = document.querySelector('.open-budget-tracker-btn');
-        const closeBudgetTrackerBtn = document.querySelector('.close-budget-tracker');
-
-        openBudgetTrackerBtn.addEventListener('click', function() {
-            budgetTrackerSection.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        closeBudgetTrackerBtn.addEventListener('click', function() {
-            budgetTrackerSection.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        });
-
-        budgetTrackerSection.addEventListener('click', function(e) {
-            if (e.target === budgetTrackerSection) {
-                budgetTrackerSection.classList.remove('active');
-                document.body.style.overflow = 'auto';
             }
-        });
 
-        // Welcome button interaction
-        const welcomeButton = document.querySelector('.welcome-button');
-        if (welcomeButton) {
-            welcomeButton.addEventListener('click', function() {
-                alert('Welcome to JOURNEY.AI! Let us help you plan your next adventure.');
-            });
-        }
+            if (closeBudgetTrackerBtn) {
+                closeBudgetTrackerBtn.addEventListener('click', function() {
+                    budgetTrackerSection.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+            
+            if (budgetTrackerSection) {
+                budgetTrackerSection.addEventListener('click', function(e) {
+                    if (e.target === budgetTrackerSection) {
+                        budgetTrackerSection.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mainNav = document.querySelector('.main-nav');
-        
-        mobileMenuBtn.addEventListener('click', function() {
-            mainNav.style.display = mainNav.style.display === 'block' ? 'none' : 'block';
-        });
+            // --- 4. MOBILE MENU TOGGLE ---
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mainNav = document.querySelector('.main-nav');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.style.display = mainNav.style.display === 'block' ? 'none' : 'block';
+                });
+            }
 
-        // Close mobile menu when clicking on a link
-        const navItems = document.querySelectorAll('.main-nav a');
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                if (window.innerWidth <= 992) {
-                    mainNav.style.display = 'none';
-                }
+            // Close mobile menu when clicking on a link
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) {
+                        mainNav.style.display = 'none';
+                    }
+                });
             });
         });
     </script>

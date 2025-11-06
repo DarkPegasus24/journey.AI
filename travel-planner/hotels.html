@@ -138,38 +138,76 @@
             background: linear-gradient(to right,#2A6DFF, #c235ff) !important;
         }
 
+        /* --- STYLES FOR DYNAMIC AUTH BUTTONS --- */
         .auth-buttons {
             display: flex;
             gap: 15px;
         }
-
-        .login-btn, .signup-btn {
+        .btn-base {
             padding: 10px 20px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid var(--primary);
         }
-
         .login-btn {
-            color:  #2A6DFF;
-            border: 2px solid  #2A6DFF;
+            color:  var(--primary);
         }
-
         .login-btn:hover {
             background-color: black;
             color: white;
         }
-
         .signup-btn {
             background-color: BLACK ;
-            color: #2A6DFF;
-             border: 2px solid #2A6DFF;
+            color: var(--primary);
         }
-
         .signup-btn:hover {
             background-color: rgb(0, 0, 0);
             color: #ffffff;
+        }
+        .logout-btn {
+            background-color: #f72585; /* A danger/logout color */
+            color: white;
+            border: 2px solid #f72585;
+        }
+        .logout-btn:hover {
+            background-color: #d11466;
+            border-color: #d11466;
+        }
+        .welcome-message {
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            align-self: center;
+        }
+        /* --- END NEW STYLES --- */
+
+
+                /* Plan My Trip Button */
+        .plan-trip-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--sunset-orange);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 99;
+            transition: all 0.3s;
+        }
+
+        .plan-trip-btn:hover {
+            background: var(--warm-orange);
+            transform: translateY(-5px);
         }
 
         .mobile-menu-btn {
@@ -663,10 +701,6 @@
             .hero-title {
                 font-size: 3.5rem;
             }
-            
-            .auth-buttons {
-                display: none;
-            }
         }
 
         @media (max-width: 768px) {
@@ -727,17 +761,21 @@
                 
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="index.html" class="active">Home</a></li>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="destination.html">Destinations</a></li>
-                        <li><a href="hotels.html">Hotels</a></li>
+                        <li><a href="hotels.html" class="active">Hotels</a></li>
                         <li><a href="travel.html">Travel Guides</a></li>
                        
                     </ul>
                 </nav>
                 
-                <div class="auth-buttons">
-                    <a href="login.html" class="login-btn">Log in</a>
-                    <a href="signup.html" class="signup-btn">Sign up</a>
+                <!-- 
+                  ==================================================================
+                  THIS IS THE FIX - This div is now empty and has the correct ID
+                  ==================================================================
+                -->
+                <div class="auth-buttons" id="auth-container">
+                    <!-- JavaScript will put buttons here -->
                 </div>
                 
                 <button class="mobile-menu-btn">
@@ -896,246 +934,302 @@
     </footer>
 
     <!-- Floating Button -->
-    <button class="floating-plan-btn">
-        <i class="fas fa-calendar-alt"></i>
-        Plan Your Trip
+    <button class="plan-trip-btn">
+        <i class="fas fa-plus"></i>
+        Plan My Trip
     </button>
 
+    <!-- 
+      ==================================================================
+      NEW SCRIPT BLOCK - Replaces your old <script> block
+      ==================================================================
+    -->
     <script>
-        // Navigation active state management
-function setActiveNavLink() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navLinks = document.querySelectorAll('.main-nav a');
-    
-    navLinks.forEach(link => {
-        const linkHref = link.getAttribute('href');
-        if (linkHref === currentPage) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-}
-
-// Also handle click events for navigation
-document.querySelectorAll('.main-nav a').forEach(link => {
-    link.addEventListener('click', function(e) {
-        // Remove active class from all links
-        document.querySelectorAll('.main-nav a').forEach(l => l.classList.remove('active'));
-        // Add active class to clicked link
-        this.classList.add('active');
-    });
-});
-
-// Set active link on page load
-setActiveNavLink();
-        
-        // Sample hotel data
-        const hotels = [
-            {
-                id: 1,
-                name: "Grand Plaza Hotel",
-                location: "New York, USA",
-                price: 249,
-                rating: 4.7,
-                image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80",
-                features: ["Free WiFi", "Swimming Pool", "Spa", "Restaurant"],
-                badge: "Popular"
-            },
-            {
-                id: 2,
-                name: "Oceanview Resort",
-                location: "Miami, USA",
-                price: 189,
-                rating: 4.5,
-                image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                features: ["Beach Access", "Free WiFi", "Fitness Center", "Bar"],
-                badge: "Beachfront"
-            },
-            {
-                id: 3,
-                name: "Mountain Retreat",
-                location: "Aspen, USA",
-                price: 329,
-                rating: 4.9,
-                image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-                features: ["Ski-in/Ski-out", "Hot Tub", "Fireplace", "Restaurant"],
-                badge: "Luxury"
-            },
-            {
-                id: 4,
-                name: "City Central Hotel",
-                location: "Chicago, USA",
-                price: 159,
-                rating: 4.3,
-                image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                features: ["Free WiFi", "Business Center", "Fitness Center", "Restaurant"],
-                badge: "Business"
-            },
-            {
-                id: 5,
-                name: "Luxury Palace",
-                location: "Las Vegas, USA",
-                price: 399,
-                rating: 4.8,
-                image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                features: ["Casino", "Spa", "Multiple Pools", "Fine Dining"],
-                badge: "Premium"
-            },
-            {
-                id: 6,
-                name: "Seaside Inn",
-                location: "San Diego, USA",
-                price: 179,
-                rating: 4.6,
-                image: "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                features: ["Ocean View", "Free WiFi", "Beach Access", "Restaurant"],
-                badge: "Family"
-            }
-        ];
-
-        // Function to display hotels
-        function displayHotels(hotelsArray) {
-            const hotelGrid = document.getElementById('hotel-grid');
-            hotelGrid.innerHTML = '';
+        // Run all our JavaScript code once the page is loaded
+        document.addEventListener('DOMContentLoaded', function() {
             
-            hotelsArray.forEach(hotel => {
-                const hotelCard = document.createElement('div');
-                hotelCard.className = 'hotel-card';
-                
-                // Generate stars based on rating
-                const stars = Math.floor(hotel.rating);
-                let starsHTML = '';
-                for (let i = 0; i < 5; i++) {
-                    if (i < stars) {
-                        starsHTML += '<i class="fas fa-star"></i>';
+            // --- 1. SESSION MANAGEMENT (Check if user is logged in) ---
+            const authContainer = document.getElementById('auth-container');
+            
+            async function checkLoginStatus() {
+                try {
+                    // We use cache: 'no-store' to make sure we always get the latest login status
+                    const response = await fetch('check_session.php', { cache: 'no-store' });
+                    const result = await response.json();
+
+                    if (result.loggedIn) {
+                        // User IS logged in
+                        authContainer.innerHTML = `
+                            <span class="welcome-message">Welcome, ${result.username}!</span>
+                            <button id="logout-btn" class="btn-base logout-btn">Log Out</button>
+                        `;
+                        document.getElementById('logout-btn').addEventListener('click', handleLogout);
                     } else {
-                        starsHTML += '<i class="far fa-star"></i>';
+                        // User is NOT logged in
+                        authContainer.innerHTML = `
+                            <a href="login.html" class="btn-base login-btn">Log in</a>
+                            <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                        `;
                     }
+                } catch (error) {
+                    console.error('Error checking session:', error);
+                    // If the check fails, just show the default login/signup buttons
+                    authContainer.innerHTML = `
+                        <a href="login.html" class="btn-base login-btn">Log in</a>
+                        <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                    `;
                 }
-                
-                // Generate features HTML
-                let featuresHTML = '';
-                hotel.features.forEach(feature => {
-                    featuresHTML += `<div class="feature"><i class="fas fa-check"></i> ${feature}</div>`;
-                });
-                
-                // Generate badge if exists
-                let badgeHTML = '';
-                if (hotel.badge) {
-                    badgeHTML = `<div class="hotel-badge">${hotel.badge}</div>`;
+            }
+            
+            // Function to handle logout
+            async function handleLogout() {
+                try {
+                    await fetch('logout.php');
+                    window.location.reload(); // Reload the page to update the state
+                } catch (error) {
+                    console.error('Error logging out:', error);
                 }
+            }
+
+            // Run the login check as soon as the page loads
+            checkLoginStatus();
+
+            
+            // --- 2. NAVIGATION ACTIVE STATE ---
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.main-nav a');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkPage = link.getAttribute('href');
                 
-                hotelCard.innerHTML = `
-                    <div class="hotel-image">
-                        <img src="${hotel.image}" alt="${hotel.name}">
-                        ${badgeHTML}
-                    </div>
-                    <div class="hotel-content">
-                        <div class="hotel-header">
-                            <h3 class="hotel-name">${hotel.name}</h3>
-                            <div class="hotel-price">$${hotel.price}<span> / night</span></div>
-                        </div>
-                        <div class="hotel-location">
-                            <i class="fas fa-map-marker-alt"></i> ${hotel.location}
-                        </div>
-                        <div class="hotel-rating">
-                            <div class="rating-stars">${starsHTML}</div>
-                            <span class="rating-value">${hotel.rating}</span>
-                        </div>
-                        <div class="hotel-features">
-                            ${featuresHTML}
-                        </div>
-                        <button class="book-btn">Book Now</button>
-                    </div>
-                `;
-                
-                hotelGrid.appendChild(hotelCard);
+                if (linkPage === currentPage) {
+                    link.classList.add('active');
+                } else if ((currentPage === 'index.html' || currentPage === '') && linkPage === 'index.html') {
+                    link.classList.add('active');
+                }
             });
-        }
 
-        // Initial display of hotels
-        displayHotels(hotels);
 
-        // Filter functionality
-        document.getElementById('price-range').addEventListener('change', function() {
-            const priceRange = this.value;
-            let filteredHotels = [...hotels];
+            // --- 3. ORIGINAL HOTELS.HTML SCRIPT (Merged) ---
             
-            if (priceRange === '$0 - $100') {
-                filteredHotels = hotels.filter(hotel => hotel.price <= 100);
-            } else if (priceRange === '$100 - $200') {
-                filteredHotels = hotels.filter(hotel => hotel.price > 100 && hotel.price <= 200);
-            } else if (priceRange === '$200 - $300') {
-                filteredHotels = hotels.filter(hotel => hotel.price > 200 && hotel.price <= 300);
-            } else if (priceRange === '$300+') {
-                filteredHotels = hotels.filter(hotel => hotel.price > 300);
+            // Sample hotel data
+            const hotels = [
+                {
+                    id: 1,
+                    name: "Grand Plaza Hotel",
+                    location: "New York, USA",
+                    price: 249,
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80",
+                    features: ["Free WiFi", "Swimming Pool", "Spa", "Restaurant"],
+                    badge: "Popular"
+                },
+                {
+                    id: 2,
+                    name: "Oceanview Resort",
+                    location: "Miami, USA",
+                    price: 189,
+                    rating: 4.5,
+                    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                    features: ["Beach Access", "Free WiFi", "Fitness Center", "Bar"],
+                    badge: "Beachfront"
+                },
+                {
+                    id: 3,
+                    name: "Mountain Retreat",
+                    location: "Aspen, USA",
+                    price: 329,
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+                    features: ["Ski-in/Ski-out", "Hot Tub", "Fireplace", "Restaurant"],
+                    badge: "Luxury"
+                },
+                {
+                    id: 4,
+                    name: "City Central Hotel",
+                    location: "Chicago, USA",
+                    price: 159,
+                    rating: 4.3,
+                    image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                    features: ["Free WiFi", "Business Center", "Fitness Center", "Restaurant"],
+                    badge: "Business"
+                },
+                {
+                    id: 5,
+                    name: "Luxury Palace",
+                    location: "Las Vegas, USA",
+                    price: 399,
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                    features: ["Casino", "Spa", "Multiple Pools", "Fine Dining"],
+                    badge: "Premium"
+                },
+                {
+                    id: 6,
+                    name: "Seaside Inn",
+                    location: "San Diego, USA",
+                    price: 179,
+                    rating: 4.6,
+                    image: "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                    features: ["Ocean View", "Free WiFi", "Beach Access", "Restaurant"],
+                    badge: "Family"
+                }
+            ];
+
+
+            const planTripBtn = document.querySelector('.plan-trip-btn');
+            if (planTripBtn) {
+                planTripBtn.addEventListener('click', function() {
+                    alert('Trip planning feature coming soon! This would open a trip customization form.');
+                });
             }
             
-            displayHotels(filteredHotels);
-            document.querySelector('.results-count').textContent = `${filteredHotels.length} hotels found`;
-        });
-
-        // Sort functionality
-        document.getElementById('sort-by').addEventListener('change', function() {
-            const sortBy = this.value;
-            let sortedHotels = [...hotels];
-            
-            if (sortBy === 'Price: Low to High') {
-                sortedHotels.sort((a, b) => a.price - b.price);
-            } else if (sortBy === 'Price: High to Low') {
-                sortedHotels.sort((a, b) => b.price - a.price);
-            } else if (sortBy === 'Guest Rating') {
-                sortedHotels.sort((a, b) => b.rating - a.rating);
+            // Function to display hotels
+            function displayHotels(hotelsArray) {
+                const hotelGrid = document.getElementById('hotel-grid');
+                hotelGrid.innerHTML = '';
+                
+                hotelsArray.forEach(hotel => {
+                    const hotelCard = document.createElement('div');
+                    hotelCard.className = 'hotel-card';
+                    
+                    const stars = Math.floor(hotel.rating);
+                    let starsHTML = '';
+                    for (let i = 0; i < 5; i++) {
+                        if (i < stars) {
+                            starsHTML += '<i class="fas fa-star"></i>';
+                        } else {
+                            starsHTML += '<i class="far fa-star"></i>';
+                        }
+                    }
+                    
+                    let featuresHTML = hotel.features.map(feature => 
+                        `<div class="feature"><i class="fas fa-check"></i> ${feature}</div>`
+                    ).join('');
+                    
+                    let badgeHTML = hotel.badge ? `<div class="hotel-badge">${hotel.badge}</div>` : '';
+                    
+                    hotelCard.innerHTML = `
+                        <div class="hotel-image">
+                            <img src="${hotel.image}" alt="${hotel.name}">
+                            ${badgeHTML}
+                        </div>
+                        <div class="hotel-content">
+                            <div class="hotel-header">
+                                <h3 class="hotel-name">${hotel.name}</h3>
+                                <div class="hotel-price">$${hotel.price}<span> / night</span></div>
+                            </div>
+                            <div class="hotel-location">
+                                <i class="fas fa-map-marker-alt"></i> ${hotel.location}
+                            </div>
+                            <div class="hotel-rating">
+                                <div class="rating-stars">${starsHTML}</div>
+                                <span class="rating-value">${hotel.rating}</span>
+                            </div>
+                            <div class="hotel-features">
+                                ${featuresHTML}
+                            </div>
+                            <button class="book-btn">Book Now</button>
+                        </div>
+                    `;
+                    hotelGrid.appendChild(hotelCard);
+                });
             }
-            
-            displayHotels(sortedHotels);
-        });
 
-        // Rating filter
-        document.getElementById('rating').addEventListener('change', function() {
-            const ratingFilter = this.value;
-            let filteredHotels = [...hotels];
-            
-            if (ratingFilter === '7+ Good') {
-                filteredHotels = hotels.filter(hotel => hotel.rating >= 7);
-            } else if (ratingFilter === '8+ Very Good') {
-                filteredHotels = hotels.filter(hotel => hotel.rating >= 8);
-            } else if (ratingFilter === '9+ Excellent') {
-                filteredHotels = hotels.filter(hotel => hotel.rating >= 9);
+            // Initial display of hotels
+            displayHotels(hotels);
+
+            // --- Event Listeners for Filters ---
+            const priceRangeEl = document.getElementById('price-range');
+            if (priceRangeEl) {
+                priceRangeEl.addEventListener('change', function() {
+                    const priceRange = this.value;
+                    let filteredHotels = [...hotels];
+                    
+                    if (priceRange === '$0 - $100') {
+                        filteredHotels = hotels.filter(hotel => hotel.price <= 100);
+                    } else if (priceRange === '$100 - $200') {
+                        filteredHotels = hotels.filter(hotel => hotel.price > 100 && hotel.price <= 200);
+                    } else if (priceRange === '$200 - $300') {
+                        filteredHotels = hotels.filter(hotel => hotel.price > 200 && hotel.price <= 300);
+                    } else if (priceRange === '$300+') {
+                        filteredHotels = hotels.filter(hotel => hotel.price > 300);
+                    }
+                    
+                    displayHotels(filteredHotels);
+                    document.querySelector('.results-count').textContent = `${filteredHotels.length} hotels found`;
+                });
             }
-            
-            displayHotels(filteredHotels);
-            document.querySelector('.results-count').textContent = `${filteredHotels.length} hotels found`;
-        });
 
-        // Book button functionality
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('book-btn')) {
-                const hotelCard = e.target.closest('.hotel-card');
-                const hotelName = hotelCard.querySelector('.hotel-name').textContent;
-                alert(`Booking ${hotelName} - Redirecting to booking page...`);
-                // In a real application, this would redirect to a booking page
+            const sortByEl = document.getElementById('sort-by');
+            if (sortByEl) {
+                sortByEl.addEventListener('change', function() {
+                    const sortBy = this.value;
+                    // We need to get the currently displayed hotels to sort them
+                    // This is a simple implementation; a better one would re-filter *then* sort
+                    let sortedHotels = [...hotels]; // For this demo, we'll just sort the full list
+                    
+                    if (sortBy === 'Price: Low to High') {
+                        sortedHotels.sort((a, b) => a.price - b.price);
+                    } else if (sortBy === 'Price: High to Low') {
+                        sortedHotels.sort((a, b) => b.price - a.price);
+                    } else if (sortBy === 'Guest Rating') {
+                        sortedHotels.sort((a, b) => b.rating - a.rating);
+                    }
+                    
+                    displayHotels(sortedHotels);
+                });
             }
-        });
 
-        // Mobile menu functionality
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mainNav = document.querySelector('.main-nav');
-        const mobileMenuOverlay = document.createElement('div');
-        mobileMenuOverlay.className = 'mobile-menu-overlay';
-        document.body.appendChild(mobileMenuOverlay);
+            const ratingEl = document.getElementById('rating');
+            if (ratingEl) {
+                ratingEl.addEventListener('change', function() {
+                    const ratingFilter = parseFloat(this.value); // e.g., "7"
+                    let filteredHotels = [...hotels];
+                    
+                    if (ratingFilter) {
+                        filteredHotels = hotels.filter(hotel => hotel.rating >= ratingFilter);
+                    }
+                    
+                    displayHotels(filteredHotels);
+                    document.querySelector('.results-count').textContent = `${filteredHotels.length} hotels found`;
+                });
+            }
 
-        mobileMenuBtn.addEventListener('click', function() {
-            mainNav.classList.toggle('active');
-            mobileMenuOverlay.classList.toggle('active');
-        });
+            // Book button functionality (using event delegation)
+            const hotelGrid = document.getElementById('hotel-grid');
+            if (hotelGrid) {
+                hotelGrid.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('book-btn')) {
+                        const hotelCard = e.target.closest('.hotel-card');
+                        const hotelName = hotelCard.querySelector('.hotel-name').textContent;
+                        alert(`Booking ${hotelName} - Redirecting to booking page...`);
+                        // In a real application, this would redirect to a booking page
+                    }
+                });
+            }
 
-        mobileMenuOverlay.addEventListener('click', function() {
-            mainNav.classList.remove('active');
-            mobileMenuOverlay.classList.remove('active');
-        });
+            // --- Mobile menu functionality ---
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mainNav = document.querySelector('.main-nav');
+            const mobileMenuOverlay = document.createElement('div');
+            mobileMenuOverlay.className = 'mobile-menu-overlay';
+            document.body.appendChild(mobileMenuOverlay);
+
+            if(mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.classList.toggle('active');
+                    mobileMenuOverlay.classList.toggle('active');
+                });
+            }
+
+            mobileMenuOverlay.addEventListener('click', function() {
+                mainNav.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+            });
         
+        }); // End of DOMContentLoaded
     </script>
 </body>
 </html>

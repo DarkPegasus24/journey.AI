@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,8 +14,7 @@
     }
 
     body {
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1740&q=80') 
-                  no-repeat center center/cover;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1740&q=80') no-repeat center center/cover;
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -113,6 +113,27 @@
       text-decoration: none;
     }
 
+    /* This is new! For showing success or error messages */
+    #message-area {
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      /* Hidden by default */
+    }
+
+    .message-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .message-error {
+      background-color: #dc3545;
+      color: white;
+    }
+
     @media (max-width: 600px) {
       .container {
         width: 90%;
@@ -121,16 +142,18 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="icon">
-      <img src="images/logo2.png" alt="Logo" />
+      <!-- <img src="images/logo2.png" alt="Logo" /> -->
     </div>
     <h2>Welcome Back</h2>
 
-    <form>
+    <!-- We give the form an ID to grab it with JavaScript -->
+    <form id="login-form">
       <div class="input-field">
-        <input type="email" placeholder="Enter your email address" required />
+        <input type="email" id="email" placeholder="Enter your email address" required />
       </div>
       <div class="input-field">
         <input type="password" id="password" placeholder="Enter your password" required />
@@ -138,6 +161,9 @@
       </div>
 
       <button type="submit" class="btn">Log In</button>
+
+      <!-- This is our new message area -->
+      <p id="message-area"></p>
 
       <div class="signup-link">
         Don’t have an account? <a href="signup.html">Sign Up</a>
@@ -154,6 +180,50 @@
       const input = document.getElementById(id);
       input.type = input.type === 'password' ? 'text' : 'password';
     }
+
+    // --- NEW JAVASCRIPT ---
+    const loginForm = document.getElementById('login-form');
+    const messageArea = document.getElementById('message-area');
+
+    loginForm.addEventListener('submit', async function (event) {
+      event.preventDefault(); // Stop the form from submitting the old way
+
+      // 1. Get data from the form
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // 2. Send data to login.php
+      try {
+        const response = await fetch('/journey.AI/travel-planner/login.php', {  // <-- changed
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json(); // Get the JSON response from PHP
+
+        // 3. Show the message from the server
+        messageArea.textContent = result.message;
+        messageArea.style.display = 'block';
+
+        if (result.success) {
+          messageArea.className = 'message-success';
+          // If login worked, redirect to the home page after 2 seconds
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 2000);
+        } else {
+          messageArea.className = 'message-error';
+        }
+
+      } catch (error) {
+        // This catches network errors
+        messageArea.textContent = 'An error occurred. Please try again.';
+        messageArea.className = 'message-error';
+        messageArea.style.display = 'block';
+      }
+    });
   </script>
 </body>
+
 </html>

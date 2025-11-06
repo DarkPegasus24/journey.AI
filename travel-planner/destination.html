@@ -12,6 +12,17 @@
 
 <style>
      :root {
+            --primary: #2A6DFF;
+            --primary-dark: #1A57E0;
+            --secondary: #c235ff;
+            --dark: #000000;
+            --light: #F8F9FA;
+            --gray: #6C757D;    
+            --success: #28A745;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.5s ease;
+
             --primary-blue: #1a73e8;
             --ocean-blue: #4285f4;
             --light-blue: #8ab4f8;
@@ -140,39 +151,51 @@
             background: linear-gradient(to right,#2A6DFF, #c235ff) !important;
         }
 
+        /* --- STYLES FOR DYNAMIC AUTH BUTTONS --- */
         .auth-buttons {
             display: flex;
             gap: 15px;
         }
-
-        .login-btn, .signup-btn {
+        .btn-base {
             padding: 10px 20px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
-            transition:all 0.5s ease;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid var(--primary);
         }
-
         .login-btn {
-            color:  #2A6DFF;
-            border: 2px solid  #2A6DFF;
+            color:  var(--primary);
         }
-
         .login-btn:hover {
             background-color: black;
             color: white;
         }
-
         .signup-btn {
             background-color: BLACK ;
-            color: #2A6DFF;
-             border: 2px solid #2A6DFF;
+            color: var(--primary);
         }
-
         .signup-btn:hover {
             background-color: rgb(0, 0, 0);
             color: #ffffff;
         }
+        .logout-btn {
+            background-color: #f72585; /* A danger/logout color */
+            color: white;
+            border: 2px solid #f72585;
+        }
+        .logout-btn:hover {
+            background-color: #d11466;
+            border-color: #d11466;
+        }
+        .welcome-message {
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            align-self: center;
+        }
+        /* --- END NEW STYLES --- */
 
         .mobile-menu-btn {
             display: none;
@@ -755,16 +778,20 @@
 
                 <nav class="main-nav" role="navigation" aria-label="Main navigation">
                     <ul>
-                        <li><a href="index.html" class="active">Home</a></li>
-                        <li><a href="destination.html">Destinations</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="destination.html" class="active">Destinations</a></li>
                         <li><a href="hotels.html">Hotels</a></li>
                         <li><a href="travel.html">Travel Guides</a></li>
                     </ul>
                 </nav>
                 
-                <div class="auth-buttons">
-                    <a href="login.html" class="login-btn">Log in</a>
-                    <a href="signup.html" class="signup-btn">Sign up</a>
+                <!-- 
+                  ==================================================================
+                  THIS IS THE FIX - This div is now empty and has the correct ID
+                  ==================================================================
+                -->
+                <div class="auth-buttons" id="auth-container">
+                    <!-- JavaScript will put buttons here -->
                 </div>
                 
                 <button class="mobile-menu-btn" aria-label="Toggle mobile menu">
@@ -1266,158 +1293,191 @@
         </div>
     </footer>
 
-     <script>
-        // Expand destination cards
-        document.querySelectorAll('.view-itinerary').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const card = this.closest('.destination-card');
-                card.classList.add('expanded');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Close expanded cards
-        document.querySelectorAll('.close-expanded').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const card = this.closest('.destination-card');
-                card.classList.remove('expanded');
-                document.body.style.overflow = 'auto';
-            });
-        });
-
-        // Close expanded card when clicking outside
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.destination-card.expanded') && !e.target.closest('.expanded-content')) {
-                document.querySelectorAll('.destination-card.expanded').forEach(card => {
-                    card.classList.remove('expanded');
-                });
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Bookmark functionality
-        document.querySelectorAll('.bookmark-btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas', 'active');
-                } else {
-                    icon.classList.remove('fas', 'active');
-                    icon.classList.add('far');
-                }
-            });
-        });
-
-        // Plan My Trip button
-        document.querySelector('.plan-trip-btn').addEventListener('click', function() {
-            alert('Trip planning feature coming soon! This would open a trip customization form.');
-        });
-// Navigation active state based on current page
+    <!-- 
+      ==================================================================
+      NEW SCRIPT BLOCK - Replaces your old <script> block
+      ==================================================================
+    -->
+    <script>
+        // Run all our JavaScript code once the page is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- 1. SESSION MANAGEMENT (Check if user is logged in) ---
+            const authContainer = document.getElementById('auth-container');
+            
+            async function checkLoginStatus() {
+                try {
+                    // We use cache: 'no-store' to make sure we always get the latest login status
+                    const response = await fetch('check_session.php', { cache: 'no-store' });
+                    const result = await response.json();
+
+                    if (result.loggedIn) {
+                        // User IS logged in
+                        authContainer.innerHTML = `
+                            <span class="welcome-message">Welcome, ${result.username}!</span>
+                            <button id="logout-btn" class="btn-base logout-btn">Log Out</button>
+                        `;
+                        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+                    } else {
+                        // User is NOT logged in
+                        authContainer.innerHTML = `
+                            <a href="login.html" class="btn-base login-btn">Log in</a>
+                            <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error checking session:', error);
+                    // If the check fails, just show the default login/signup buttons
+                    authContainer.innerHTML = `
+                        <a href="login.html" class="btn-base login-btn">Log in</a>
+                        <a href="signup.html" class="btn-base signup-btn">Sign up</a>
+                    `;
+                }
+            }
+            
+            // Function to handle logout
+            async function handleLogout() {
+                try {
+                    await fetch('logout.php');
+                    window.location.reload(); // Reload the page to update the state
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                }
+            }
+
+            // Run the login check as soon as the page loads
+            checkLoginStatus();
+
+            
+            // --- 2. NAVIGATION ACTIVE STATE ---
             const currentPage = window.location.pathname.split('/').pop();
             const navLinks = document.querySelectorAll('.main-nav a');
             
             navLinks.forEach(link => {
-                // Remove active class from all links first
                 link.classList.remove('active');
-                
-                // Get the href of the link and compare with current page
                 const linkPage = link.getAttribute('href');
                 
-                // Special case for index.html or root
-                if ((currentPage === 'index.html' || currentPage === '' || currentPage.includes('index')) && linkPage === 'index.html') {
+                if (linkPage === currentPage) {
+                    link.classList.add('active');
+                } else if ((currentPage === 'index.html' || currentPage === '') && linkPage === 'index.html') {
                     link.classList.add('active');
                 }
-                // For other pages
-                else if (linkPage === currentPage) {
-                    link.classList.add('active');
-                }
-                
-                // Add click handler for visual feedback
-                link.addEventListener('click', function() {
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+            });
+
+            // --- 3. ORIGINAL DESTINATION.HTML SCRIPT (Merged) ---
+            
+            // Expand destination cards
+            document.querySelectorAll('.view-itinerary').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Close any other expanded cards first
+                    document.querySelectorAll('.destination-card.expanded').forEach(otherCard => {
+                        otherCard.classList.remove('expanded');
+                    });
+                    
+                    const card = this.closest('.destination-card');
+                    card.classList.add('expanded');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
                 });
             });
-            
-            // Scroll animation
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            const fadeInOnScroll = function() {
-                fadeElements.forEach(element => {
-                    const elementTop = element.getBoundingClientRect().top;
-                    const elementVisible = 150;
-                    
-                    if (elementTop < window.innerHeight - elementVisible) {
-                        element.classList.add('visible');
+
+            // Close expanded cards
+            document.querySelectorAll('.close-expanded').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const card = this.closest('.destination-card');
+                    card.classList.remove('expanded');
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                });
+            });
+
+            // Close expanded card when clicking outside (on the overlay)
+            // Note: This logic is simple and might close if you click on padding inside the card.
+            // A more robust solution would add a dedicated overlay div.
+            document.addEventListener('click', function(e) {
+                // Check if we're clicking outside an expanded card
+                if (!e.target.closest('.destination-card.expanded')) {
+                    document.querySelectorAll('.destination-card.expanded').forEach(card => {
+                        card.classList.remove('expanded');
+                    });
+                    document.body.style.overflow = 'auto';
+                }
+                // Stop click from bubbling up if it's inside the expanded content
+                if (e.target.closest('.expanded-content')) {
+                    e.stopPropagation();
+                }
+            }, true); // Use capture phase to make this work reliably
+
+            // Bookmark functionality
+            document.querySelectorAll('.bookmark-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'active');
+                    } else {
+                        icon.classList.remove('fas', 'active');
+                        icon.classList.add('far');
                     }
                 });
-            };
-            
-            // Check on load
-            fadeInOnScroll();
-            
-            // Check on scroll
-            window.addEventListener('scroll', fadeInOnScroll);
-        });
+            });
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mainNav = document.querySelector('.main-nav');
-        const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
-        
-        mobileMenuBtn.addEventListener('click', function() {
-            mainNav.classList.toggle('active');
-            mobileMenuOverlay.classList.toggle('active');
-            
-            // Toggle menu icon
-            const icon = this.querySelector('i');
-            if (icon.classList.contains('fa-bars')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+            // Plan My Trip button
+            const planTripBtn = document.querySelector('.plan-trip-btn');
+            if (planTripBtn) {
+                planTripBtn.addEventListener('click', function() {
+                    alert('Trip planning feature coming soon! This would open a trip customization form.');
+                });
             }
-        });
-        
-        // Close mobile menu when clicking on overlay
-        mobileMenuOverlay.addEventListener('click', function() {
-            mainNav.classList.remove('active');
-            this.classList.remove('active');
-            
-            // Reset menu icon
-            const icon = mobileMenuBtn.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        });
 
-        // Close mobile menu when clicking on a link
-        const navItems = document.querySelectorAll('.main-nav a');
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                if (window.innerWidth <= 992) {
-                    mainNav.classList.remove('active');
-                    mobileMenuOverlay.classList.remove('active');
+            // --- 4. Mobile menu functionality ---
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mainNav = document.querySelector('.main-nav');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.classList.toggle('active');
+                    if (mobileMenuOverlay) mobileMenuOverlay.classList.toggle('active');
                     
-                    // Reset menu icon
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('fa-bars')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+            
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', function() {
+                    mainNav.classList.remove('active');
+                    this.classList.remove('active');
+                    
                     const icon = mobileMenuBtn.querySelector('i');
                     icon.classList.remove('fa-times');
                     icon.classList.add('fa-bars');
-                }
-            });
-        });
+                });
+            }
 
-        // Floating button interaction
-        const floatingBtn = document.querySelector('.floating-plan-btn');
-        floatingBtn.addEventListener('click', function() {
-            alert('Let us help you plan your perfect Bali trip! Our AI assistant will create a personalized itinerary just for you.');
-        });
-        
+            const navItems = document.querySelectorAll('.main-nav a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) {
+                        mainNav.classList.remove('active');
+                        if (mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
+                        
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            });
+
+        }); // End of DOMContentLoaded
     </script>
 </body>
 </html>
